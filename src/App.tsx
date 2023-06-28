@@ -1,24 +1,124 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { inferFromImageFiles } from './roboflowApi'
 
 function App() {
+
+  const [shirts, setShirts] = useState(0);
+  const [socks, setSocks] = useState(0);
+  const [underwear, setUnderwear] = useState(0);
+  const [shorts, setShorts] = useState(0);
+  const [files, setFiles] = useState([])
+  const [numOfLaundryLoads, setNumOfLaundryLoads] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+
+  // get the apiKey from the url
+  const apiKey = new URLSearchParams(window.location.search).get('apiKey') || '';
+
+  const handleFileSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    setShirts(0);
+    setSocks(0);
+    setUnderwear(0);
+    setShorts(0);
+    const fileInput = document.getElementById('file') as HTMLInputElement;
+    const inputFiles = Array.from(fileInput?.files || []);
+    setIsLoading(true);
+    const itemCounts = await inferFromImageFiles(apiKey, inputFiles);
+    setIsLoading(false);
+
+    setShirts(itemCounts.Shirt || 0);
+    setSocks(itemCounts.Sock || 0);
+    setUnderwear(itemCounts.Underwear || 0);
+    setShorts(itemCounts.Shorts || 0);
+
+    // calulate number of laundry loads
+    const numOfLaundryLoadsTmp = Math.ceil((Math.ceil((itemCounts.Shirt || 0) / 3.5) + Math.ceil((itemCounts.Sock || 0) / 1) + Math.ceil((itemCounts.Underwear || 0) / 2.5) + Math.ceil((itemCounts.Shorts || 0) / 3.5)) / 30)
+    setNumOfLaundryLoads(numOfLaundryLoadsTmp);
+
+    }
+  
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1 className="header">Laundry Estimator</h1>
+      <h2 className="header">Upload your photos to see how many loads of laundry you have to do.</h2>
+      <p>
+        This is based on an <i>estimatation</i> of the average washing machine. I used this post as a reference: 
+         <a href="https://tide.com/en-us/how-to-wash-clothes/washing-machine-101/how-to-use-a-washing-machine/load-size-by-drum-size">Tide: How to use a washing machine</a>
+      </p>
+      <p>
+        I'm going to assume you are doing a regular load of laundry, which could consist of:
+      </p>
+        <ul className="laundry-list">
+          <li>10-12 shirts</li>
+          <li>20-30 pairs of socks</li>
+          <li>10-12 pairs of underwear</li>
+          <li>7-8 pairs of shorts</li>
+        </ul>
+      <p>
+        To make it simple, I'm going to declare 1 pair of socks = 1 unit of laundry. The table below shows the number of units of laundry each item is worth.
+      </p>
+      <table className='units-table'>
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Units</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Shirt</td>
+            <td>3.5</td>
+          </tr>
+          <tr>
+            <td>Sock</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>Underwear</td>
+            <td>2.5</td>
+          </tr>
+          <tr>
+            <td>Shorts</td>
+            <td>3.5</td>
+          </tr>
+        </tbody>
+      </table>
+      <div className="upload">
+        <form onSubmit={handleFileSubmit}>
+          <input type="file" id="file" name="file" multiple onChange={(e: any)=>setFiles(e.target.files)} disabled={isLoading}/>
+          <button type="submit" className={((files.length > 0) && !isLoading) ? 'button' : 'button-disabled'} disabled={!files.length || isLoading}>Detect Laundry</button>
+        </form>
+      <div className="results-table-container">
+    {
+      isLoading && <h1>Detecting Laundry...</h1>
+    }
+        <div>
+        </div>
+        <table className='results-table'>
+          <thead>
+            <tr>
+              <th>Shirts</th>
+              <th>Socks</th>
+              <th>Underwear</th>
+              <th>Shorts</th>
+              <th>Total loads of laundry</th>
+            </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>{shirts}</td>
+            <td>{socks}</td>
+            <td>{underwear}</td>
+            <td>{shorts}</td>
+            <td>{numOfLaundryLoads}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
     </div>
   );
 }
