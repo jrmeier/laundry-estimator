@@ -1,5 +1,5 @@
 import { readAndCompressImage } from 'browser-image-resizer';
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { ItemCounts } from './App';
 
 interface Prediction {
