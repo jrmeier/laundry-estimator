@@ -10,7 +10,7 @@ Do you ever wonder how much laundry you actually do? With this tool, you can sim
 
 ## Getting Started
 
-To use the app, simply navigate to the [URL](INSERT_URL).
+To use the app, simply navigate to [Laundry Estimator](https://jrmeier.github.io/laundry-estimator). You'll want to use the link I emailed, as the API key is required and pulled from the URL params.
 
 If you want to install it and modify the code:
 
@@ -54,4 +54,4 @@ Obviously, this is a toy application, but it was a fun way to learn about the Ro
   * After I built the first version, I uploaded some photos, but they ended up being too large to send the the Infer API. I ended up adding a resize feature which solves the problem. However, I did reference the [full stack app on codepen](https://codepen.io/roboflow/pen/VwaKXdM) and didn't see any image resizing, so I'm not sure how that's working.
   * I think the browser inference would solve this and make it a non-issue.
 * I didn't realize how important it is to have a good dataset. I think this is the most important part of the project and I should have spent more time on it. I should have taken more photos of my own clothes, my fiance's clothes, and in many different places with many different backgrounds.
-* Sometimes I get a 500 error from the Roboflow infer API, this is probably due to calling all the images at once. I believe this problem shouldn't be solved and instead the inference should happen on the client side. 
+* Sometimes I get a 500 error from the Roboflow infer API, this is probably due to calling all the images at once. I believe this problem shouldn't be solved and instead the inference should happen on the client side.
