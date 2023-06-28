@@ -55,3 +55,5 @@ Obviously, this is a toy application, but it was a fun way to learn about the Ro
   * I think the browser inference would solve this and make it a non-issue.
 * I didn't realize how important it is to have a good dataset. I think this is the most important part of the project and I should have spent more time on it. I should have taken more photos of my own clothes, my fiance's clothes, and in many different places with many different backgrounds.
 * Sometimes I get a 500 error from the Roboflow infer API, this is probably due to calling all the images at once. I believe this problem shouldn't be solved and instead the inference should happen on the client side.
+* Some of the examples in the documentation don't work as expected.
+  * example: on the "Deploy" page of my project, the CURL example doesn't work as it. All that is missing is the `-i` flag
