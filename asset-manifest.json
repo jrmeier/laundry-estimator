@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/laundry-estimator/static/css/main.941e1130.css",
+    "main.js": "/laundry-estimator/static/js/main.dc727d29.js",
+    "static/js/787.96e33364.chunk.js": "/laundry-estimator/static/js/787.96e33364.chunk.js",
+    "index.html": "/laundry-estimator/index.html",
+    "main.941e1130.css.map": "/laundry-estimator/static/css/main.941e1130.css.map",
+    "main.dc727d29.js.map": "/laundry-estimator/static/js/main.dc727d29.js.map",
+    "787.96e33364.chunk.js.map": "/laundry-estimator/static/js/787.96e33364.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.941e1130.css",
+    "static/js/main.dc727d29.js"
+  ]
+}
