@@ -36,6 +36,7 @@ function App() {
   const handleFileSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!files) return;
+    if(!apiKey) return;
 
     setIsLoading(true);
 
@@ -52,6 +53,7 @@ function App() {
   return (
     <div className="App">
       <h1 className="header">Laundry Estimator</h1>
+      {!apiKey ? <div><h1>Missing API KEY</h1> Please add the apiKey query param to the url </div>: ''}
       <h2 className="header">Upload your photos to see how many loads of laundry you have to do.</h2>
       <p>
         This is based on an <i>estimatation</i> of the average washing machine. I used this post as a reference: 
@@ -97,8 +99,8 @@ function App() {
       </table>
       <div className="upload">
         <form onSubmit={handleFileSubmit}>
-          <input type="file" id="file" name="file" multiple onChange={(e: any)=>setFiles(e.target.files)} disabled={isLoading}/>
-          <button type="submit" className={((files.length > 0) && !isLoading) ? 'button' : 'button-disabled'} disabled={!files.length || isLoading}>Detect Laundry</button>
+          <input type="file" id="file" name="file" multiple onChange={(e: any)=>setFiles(e.target.files)} disabled={isLoading && !apiKey}/>
+          <button type="submit" className={((files.length > 0) && (!isLoading) && (apiKey)) ? 'button' : 'button-disabled'} disabled={!files.length || isLoading}>Detect Laundry</button>
         </form>
       <div className="results-table-container">
     {
