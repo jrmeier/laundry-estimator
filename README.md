@@ -1,46 +1,56 @@
-# Getting Started with Create React App
+# Laundry Estimator
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Do you ever wonder how much laundry you actually do? With this tool, you can simply upload your photos and it will attempt the number of each type of clothing in the photos and give you an estimate of how much laundry you do based on the average washing machine capacity.
 
-## Available Scripts
+## Built With
 
-In the project directory, you can run:
+* Node.js/TypeScript
+* React
+* RoboFlow Infer API
 
-### `npm start`
+## Getting Started
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+To use the app, simply navigate to the [URL](INSERT_URL).
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+If you want to install it and modify the code:
 
-### `npm test`
+1. Clone the repo
+2. Navigate to the repo
+3. Install dependencies
+4. Start the app
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Copy and paste the following into your terminal:
 
-### `npm run build`
+```sh
+git@github.com:jrmeier/laundry-estimator.git
+cd laundry-estimator
+npm i
+npm start
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Motivations
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The reason I chose this as the project was because I've also wanted a robot to do my laundry. Essentially, I would love to be able to create a robot with some arms based off of a RC car. It would drive into a room, recongize all the laundry, create a plan, then physically sort it, and then literally pick it up, put it in the washer, start it, transfer it to the dryer, start the dryer, and then fold it and put it away. Obviously this is a huge project and but that's my overall vision for it. Starting by just recongizing the type and amount of laundry is a good first step and the rest of the project is based on being able to do this well. Building a web app that shows the results of the model is a good way to use Roboflow and demonstrate some basic React skills.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Results
 
-### `npm run eject`
+Obviously, this is a toy application, but it was a fun way to learn about the RoboFlow Infer API and to play around with React. I wasn't sure how well the different types of laundry would be detected, and it turns out I don't have very many clothes, so generating enough data to train the model was a bit of a challenge. In retrospect, I should have chosen something more generic, like clothes hanging in a closet, drawers, etc. My technic of taking photos "randomly" laid out, on the same bedding turned out to be a major problem. You'll notice that most photos end being 95% a shirt, which is not very useful or accurate. Essentially, the bedding is in every single photo, which happened to be over trained with "Shirt", so the more bedding in the photo, the more likey the model will detect "Shirt". I also realized how little clothing I have myself, which severly limits the amount of training and tuning I can do for the project. I looked far and wide on the Roboflow Universe for a suitable dataset, but wasn't able to find any. I didn't realize how important it is to consider that right away in the project. The model doesn't perform well, but I did improve a few of the key metrics by applying a ton of transformations to photos. However, I think some of them such as the "cut out" feature exasperated the overfitting issue since it would cut out parts of the labeled clothes, but was just the background, which was mostly bedding.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Future features
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+* have a streaming camera that detects laundry as it comes in. Removing the need to take photos.
+  * I know this is a feature of Roboflow, but I thought it would be to complex to impliment initially. After doing this, I think it would have been about the same amount of work.
+* have a "sort" plan that groups the laundry into piles of similar clothing
+* utilize other datasets to detect how to wash the clothes
+  * I see TONS of these on the Roboflow Universe
+* have a "robot" that can physically handle the laundry
+  * I have a few ideas on how to do this, but I think it would be a lot of work
+* impliment the in browser inteference via the custom tensorflow implimentation
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Issues
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+* I wasn't able to impliment the in browser inference feature [deploy to browser](https://docs.roboflow.com/deploy/web-browser). Just following the example, I kept getting an error when calling `roboflow.auth...`, so I was never able to authenicate or get the model. I didn't spend too much time on this and its highly likely I just missed something simple, since the documentation is straightfoward.
+* Image size errors - 413 request entity too large
+  * After I built the first version, I uploaded some photos, but they ended up being too large to send the the Infer API. I ended up adding a resize feature which solves the problem. However, I did reference the [full stack app on codepen](https://codepen.io/roboflow/pen/VwaKXdM) and didn't see any image resizing, so I'm not sure how that's working.
+  * I think the brower inference would solve this and make it a non-issue.
+* I didn't realize how important it is to have a good dataset. I think this is the most important part of the project and I should have spent more time on it. I should have taken more photos of my own clothes, my fiance's clothes, and in many difference places with many different backgrounds.

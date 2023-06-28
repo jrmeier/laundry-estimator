@@ -1,44 +1,53 @@
-import React, { useState } from 'react';
-import logo from './logo.svg';
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import './App.css';
 import { inferFromImageFiles } from './roboflowApi'
 
+interface ItemCounts {
+  Shirt: number;
+  Sock: number;
+  Underwear: number;
+  Shorts: number;
+}
+
+const useApiKey = (): string => new URLSearchParams(window.location.search).get('apiKey') || '';
+
+const calculateLaundryLoads = (itemCounts: ItemCounts): number => {
+  const loadsPerItem = {
+    Shirt: 3.5,
+    Sock: 1,
+    Underwear: 2.5,
+    Shorts: 3.5,
+  };
+
+  const totalUnits = Object.entries(itemCounts).reduce((acc, [item, count]) => {
+    return acc + Math.ceil(count / (loadsPerItem as any)[item]);
+  }, 0);
+
+  return Math.ceil(totalUnits / 30);
+};
+
 function App() {
+  const [itemCounts, setItemCounts] = useState<ItemCounts>({Shirt: 0, Sock: 0, Underwear: 0, Shorts: 0});
+  const [files, setFiles] = useState<FileList | []>([]);
+  const [numOfLaundryLoads, setNumOfLaundryLoads] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const apiKey = useApiKey();
 
-  const [shirts, setShirts] = useState(0);
-  const [socks, setSocks] = useState(0);
-  const [underwear, setUnderwear] = useState(0);
-  const [shorts, setShorts] = useState(0);
-  const [files, setFiles] = useState([])
-  const [numOfLaundryLoads, setNumOfLaundryLoads] = useState(0)
-  const [isLoading, setIsLoading] = useState(false)
-
-  // get the apiKey from the url
-  const apiKey = new URLSearchParams(window.location.search).get('apiKey') || '';
-
-  const handleFileSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFileSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!files) return;
 
-    setShirts(0);
-    setSocks(0);
-    setUnderwear(0);
-    setShorts(0);
-    const fileInput = document.getElementById('file') as HTMLInputElement;
-    const inputFiles = Array.from(fileInput?.files || []);
     setIsLoading(true);
-    const itemCounts = await inferFromImageFiles(apiKey, inputFiles);
+
+    const newCounts = await inferFromImageFiles(apiKey, Array.from(files));
+    setItemCounts(newCounts);
+
     setIsLoading(false);
+  }
 
-    setShirts(itemCounts.Shirt || 0);
-    setSocks(itemCounts.Sock || 0);
-    setUnderwear(itemCounts.Underwear || 0);
-    setShorts(itemCounts.Shorts || 0);
-
-    // calulate number of laundry loads
-    const numOfLaundryLoadsTmp = Math.ceil((Math.ceil((itemCounts.Shirt || 0) / 3.5) + Math.ceil((itemCounts.Sock || 0) / 1) + Math.ceil((itemCounts.Underwear || 0) / 2.5) + Math.ceil((itemCounts.Shorts || 0) / 3.5)) / 30)
-    setNumOfLaundryLoads(numOfLaundryLoadsTmp);
-
-    }
+  useEffect(() => {
+    setNumOfLaundryLoads(calculateLaundryLoads(itemCounts));
+  }, [itemCounts]);
   
   return (
     <div className="App">
@@ -109,10 +118,10 @@ function App() {
           </thead>
           <tbody>
           <tr>
-            <td>{shirts}</td>
-            <td>{socks}</td>
-            <td>{underwear}</td>
-            <td>{shorts}</td>
+            <td>{itemCounts.Shirt}</td>
+            <td>{itemCounts.Sock}</td>
+            <td>{itemCounts.Shirt}</td>
+            <td>{itemCounts.Shorts}</td>
             <td>{numOfLaundryLoads}</td>
           </tr>
           </tbody>
