@@ -1,0 +1,27 @@
+name: Deploy Laundry Estimator
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+
+      - name: Installing my packages
+        run: npm i
+
+      - name: Set Github Env
+        run: |
+          git config --global user.email "${GITHUB_ACTOR}"
+          git config --global user.name "${GITHUB_ACTOR}@users.noreply.github.com"
+          git remote set-url origin https://${GITHUB_ACTOR}:${{secrets.GITHUB_TOKEN}}@github.com/jrmeier/v-code-challenge
+      - name: Deploy
+        run: npm run deploy

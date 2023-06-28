@@ -2,7 +2,7 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import './App.css';
 import { inferFromImageFiles } from './roboflowApi'
 
-interface ItemCounts {
+export interface ItemCounts {
   Shirt: number;
   Sock: number;
   Underwear: number;
@@ -67,7 +67,7 @@ function App() {
           <li>7-8 pairs of shorts</li>
         </ul>
       <p>
-        To make it simple, I'm going to declare 1 pair of socks = 1 unit of laundry. The table below shows the number of units of laundry each item is worth.
+        To make it simple, I'm going to declare 1 pair of socks = 1 unit of laundry. The table below shows the number of units of laundry each item is worth. Each load of laundry is 30 units.
       </p>
       <table className='units-table'>
         <thead>

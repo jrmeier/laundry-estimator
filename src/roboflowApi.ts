@@ -1,5 +1,6 @@
 import { readAndCompressImage } from 'browser-image-resizer';
 import axios, { AxiosResponse } from "axios";
+import { ItemCounts } from './App';
 
 interface Prediction {
   class: string;
@@ -24,7 +25,7 @@ const loadImageBase64 = (file: Blob): Promise<string | ArrayBuffer | null> => {
   });
 }
 
-export const inferFromImageFiles = async (apiKey: string, imageFiles: File[]): Promise<Record<string, number>> => {
+export const inferFromImageFiles = async (apiKey: string, imageFiles: File[]): Promise<ItemCounts>=> {
   const inferenceResults = await Promise.all(
     imageFiles.map(async (imageFile) => {
       try {
@@ -52,14 +53,17 @@ export const inferFromImageFiles = async (apiKey: string, imageFiles: File[]): P
     })
   );
 
-  const itemCounts = inferenceResults.reduce((acc: Record<string, number>, curr) => {
-    if (curr) {
-      curr.predictions.forEach((prediction) => {
-        acc[prediction.class] = acc[prediction.class] ? acc[prediction.class] + 1 : 1;
+  const itemCounts: ItemCounts = { Shirt: 0, Sock: 0, Underwear: 0, Shorts: 0 };
+
+  inferenceResults.forEach((result) => {
+    if (result) {
+      result.predictions.forEach((prediction) => {
+        if (itemCounts.hasOwnProperty(prediction.class)) {
+          itemCounts[prediction.class as keyof ItemCounts]++;
+        }
       });
     }
-    return acc;
-  }, {});
+  });
 
   return itemCounts;
 }
